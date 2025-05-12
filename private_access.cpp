@@ -1,6 +1,19 @@
 ﻿#include <iostream>
 #include "private_access.h"
 
+// Определения макросов
+#define EXPOSE_MEMBER(Class, Name) \
+    template struct private_access::init_member<Class, decltype(Class::Name), &Class::Name>;
+
+#define EXPOSE_METHOD(Class, Method, Signature) \
+    template struct private_access::init_member<Class, Signature, &Class::Method>;
+
+#define EXPOSE_STATIC_MEMBER(Class, Name) \
+    template struct private_access::init_static_member<Class, decltype(Class::Name), &Class::Name>;
+
+#define EXPOSE_STATIC_METHOD(Class, Method, Signature) \
+    template struct private_access::init_static_member<Class, Signature, &Class::Method>;
+
 // ==================== Пример класса ====================
 class Dog {
 public:
@@ -19,18 +32,19 @@ private:
 };
 
 // ==================== Инициализация указателей ====================
-// Члены-данные
-template struct private_access::init_member<Dog, std::string, &Dog::name>;
-template struct private_access::init_member<Dog, int, &Dog::age>;
+// Для полей
+EXPOSE_MEMBER(Dog, name); // template struct private_access::init_member<Dog, std::string, &Dog::name>;
+EXPOSE_MEMBER(Dog, age); // template struct private_access::init_member<Dog, int, &Dog::age>;
 
-// Методы
-template struct private_access::init_member<Dog, std::string() const, &Dog::bark>;
-template struct private_access::init_member<Dog, void(std::string), &Dog::rename>;
+// Для методов
+EXPOSE_METHOD(Dog, bark, std::string() const); // template struct private_access::init_member<Dog, std::string() const, &Dog::bark>;
+EXPOSE_METHOD(Dog, rename, void(std::string)); // template struct private_access::init_member<Dog, void(std::string), &Dog::rename>;
 
 // Статические члены
-template struct private_access::init_static_member<Dog, std::string, &Dog::secret>;
-template struct private_access::init_static_member<Dog, std::string(), &Dog::species>;
-template struct private_access::init_static_member<Dog, int(), &Dog::legs>;
+EXPOSE_STATIC_MEMBER(Dog, secret); // template struct private_access::init_static_member<Dog, std::string, &Dog::secret>;
+EXPOSE_STATIC_METHOD(Dog, species, std::string()); // template struct private_access::init_static_member<Dog, std::string(), &Dog::species>;
+EXPOSE_STATIC_METHOD(Dog, legs, int()); // template struct private_access::init_static_member<Dog, int(), &Dog::legs>;
+
 
 
 // ==================== Использование ====================
