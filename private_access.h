@@ -110,20 +110,20 @@ namespace private_access {
 
     // Обёртки с контекстом
 #define EXPOSE_MEMBER(Name) \
-    _EXPOSE_MEMBER_IMPL(__private_acess_class, Name)
+    _EXPOSE_MEMBER_IMPL(__private_access_class, Name)
 
 #define EXPOSE_METHOD(Method, Signature) \
-    _EXPOSE_METHOD_IMPL(__private_acess_class, Method, Signature)
+    _EXPOSE_METHOD_IMPL(__private_access_class, Method, Signature)
 
 #define EXPOSE_STATIC_MEMBER(Name) \
-    _EXPOSE_STATIC_MEMBER_IMPL(__private_acess_class, Name)
+    _EXPOSE_STATIC_MEMBER_IMPL(__private_access_class, Name)
 
 #define EXPOSE_STATIC_METHOD(Method, Signature) \
-    _EXPOSE_STATIC_METHOD_IMPL(__private_acess_class, Method, Signature)
+    _EXPOSE_STATIC_METHOD_IMPL(__private_access_class, Method, Signature)
 
 // Основной макрос PRIVATE
 #define PRIVATE(Class, Body)             \
     namespace private_access {           \
-    typedef Class __private_acess_class; \
+    typedef Class __private_access_class; \
     Body }
 }
