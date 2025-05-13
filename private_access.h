@@ -1,7 +1,7 @@
-
+п»ї
 namespace private_access {
 
-    // ==================== Базовые шаблоны ====================
+    // ==================== Р‘Р°Р·РѕРІС‹Рµ С€Р°Р±Р»РѕРЅС‹ ====================
     template<typename ClassType, typename MemberType>
     struct access_member {
         static MemberType ClassType::* ptr;
@@ -10,7 +10,7 @@ namespace private_access {
     template<typename ClassType, typename MemberType>
     MemberType ClassType::* access_member<ClassType, MemberType>::ptr = nullptr;
 
-    // Специализация для методов
+    // РЎРїРµС†РёР°Р»РёР·Р°С†РёСЏ РґР»СЏ РјРµС‚РѕРґРѕРІ
     template<typename ClassType, typename RetType, typename... Args>
     struct access_member<ClassType, RetType(Args...)> {
         static RetType(ClassType::* ptr)(Args...);
@@ -19,7 +19,7 @@ namespace private_access {
     template<typename ClassType, typename RetType, typename... Args>
     RetType(ClassType::* access_member<ClassType, RetType(Args...)>::ptr)(Args...) = nullptr;
 
-    // Специализация для const методов
+    // РЎРїРµС†РёР°Р»РёР·Р°С†РёСЏ РґР»СЏ const РјРµС‚РѕРґРѕРІ
     template<typename ClassType, typename RetType, typename... Args>
     struct access_member<ClassType, RetType(Args...) const> {
         static RetType(ClassType::* ptr)(Args...) const;
@@ -28,7 +28,7 @@ namespace private_access {
     template<typename ClassType, typename RetType, typename... Args>
     RetType(ClassType::* access_member<ClassType, RetType(Args...) const>::ptr)(Args...) const = nullptr;
 
-    // Шаблоны для статических членов
+    // РЁР°Р±Р»РѕРЅС‹ РґР»СЏ СЃС‚Р°С‚РёС‡РµСЃРєРёС… С‡Р»РµРЅРѕРІ
     template<typename ClassType, typename MemberType>
     struct access_static_member {
         static MemberType* ptr;
@@ -45,8 +45,8 @@ namespace private_access {
     template<typename ClassType, typename RetType, typename... Args>
     RetType(*access_static_member<ClassType, RetType(Args...)>::ptr)(Args...) = nullptr;
 
-    // ==================== Инициализаторы ====================
-    // Для членов-данных
+    // ==================== РРЅРёС†РёР°Р»РёР·Р°С‚РѕСЂС‹ ====================
+    // Р”Р»СЏ С‡Р»РµРЅРѕРІ-РґР°РЅРЅС‹С…
     template<typename ClassType, typename MemberType, MemberType ClassType::* ptr>
     struct init_member {
         init_member() { access_member<ClassType, MemberType>::ptr = ptr; }
@@ -56,7 +56,7 @@ namespace private_access {
     template<typename ClassType, typename MemberType, MemberType ClassType::* ptr>
     init_member<ClassType, MemberType, ptr> init_member<ClassType, MemberType, ptr>::instance;
 
-    // Для методов
+    // Р”Р»СЏ РјРµС‚РѕРґРѕРІ
     template<typename ClassType, typename RetType, typename... Args, RetType(ClassType::* ptr)(Args...)>
     struct init_member<ClassType, RetType(Args...), ptr> {
         init_member() { access_member<ClassType, RetType(Args...)>::ptr = ptr; }
@@ -66,7 +66,7 @@ namespace private_access {
     template<typename ClassType, typename RetType, typename... Args, RetType(ClassType::* ptr)(Args...)>
     init_member<ClassType, RetType(Args...), ptr> init_member<ClassType, RetType(Args...), ptr>::instance;
 
-    // Для const методов
+    // Р”Р»СЏ const РјРµС‚РѕРґРѕРІ
     template<typename ClassType, typename RetType, typename... Args, RetType(ClassType::* ptr)(Args...) const>
     struct init_member<ClassType, RetType(Args...) const, ptr> {
         init_member() { access_member<ClassType, RetType(Args...) const>::ptr = ptr; }
@@ -76,7 +76,7 @@ namespace private_access {
     template<typename ClassType, typename RetType, typename... Args, RetType(ClassType::* ptr)(Args...) const>
     init_member<ClassType, RetType(Args...) const, ptr> init_member<ClassType, RetType(Args...) const, ptr>::instance;
 
-    // Для статических членов
+    // Р”Р»СЏ СЃС‚Р°С‚РёС‡РµСЃРєРёС… С‡Р»РµРЅРѕРІ
     template<typename ClassType, typename MemberType, MemberType* ptr>
     struct init_static_member {
         init_static_member() { access_static_member<ClassType, MemberType>::ptr = ptr; }
@@ -95,3 +95,16 @@ namespace private_access {
     template<typename ClassType, typename RetType, typename... Args, RetType(*ptr)(Args...)>
     init_static_member<ClassType, RetType(Args...), ptr> init_static_member<ClassType, RetType(Args...), ptr>::instance;
 }
+
+// РћРїСЂРµРґРµР»РµРЅРёСЏ РјР°РєСЂРѕСЃРѕРІ
+#define EXPOSE_MEMBER(Class, Name) \
+    template struct private_access::init_member<Class, decltype(Class::Name), &Class::Name>;
+
+#define EXPOSE_METHOD(Class, Method, Signature) \
+    template struct private_access::init_member<Class, Signature, &Class::Method>;
+
+#define EXPOSE_STATIC_MEMBER(Class, Name) \
+    template struct private_access::init_static_member<Class, decltype(Class::Name), &Class::Name>;
+
+#define EXPOSE_STATIC_METHOD(Class, Method, Signature) \
+    template struct private_access::init_static_member<Class, Signature, &Class::Method>;

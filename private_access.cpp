@@ -1,19 +1,6 @@
 ﻿#include <iostream>
 #include "private_access.h"
 
-// Определения макросов
-#define EXPOSE_MEMBER(Class, Name) \
-    template struct private_access::init_member<Class, decltype(Class::Name), &Class::Name>;
-
-#define EXPOSE_METHOD(Class, Method, Signature) \
-    template struct private_access::init_member<Class, Signature, &Class::Method>;
-
-#define EXPOSE_STATIC_MEMBER(Class, Name) \
-    template struct private_access::init_static_member<Class, decltype(Class::Name), &Class::Name>;
-
-#define EXPOSE_STATIC_METHOD(Class, Method, Signature) \
-    template struct private_access::init_static_member<Class, Signature, &Class::Method>;
-
 // ==================== Пример класса ====================
 class Dog {
 public:
