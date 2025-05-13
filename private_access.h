@@ -1,6 +1,6 @@
-﻿
-namespace private_access {
+﻿#pragma once
 
+namespace private_access {
     // ==================== Базовые шаблоны ====================
     template<typename ClassType, typename MemberType>
     struct access_member {
@@ -94,17 +94,36 @@ namespace private_access {
 
     template<typename ClassType, typename RetType, typename... Args, RetType(*ptr)(Args...)>
     init_static_member<ClassType, RetType(Args...), ptr> init_static_member<ClassType, RetType(Args...), ptr>::instance;
-}
 
-// Определения макросов
-#define EXPOSE_MEMBER(Class, Name) \
+
+#define _EXPOSE_MEMBER_IMPL(Class, Name) \
     template struct private_access::init_member<Class, decltype(Class::Name), &Class::Name>;
 
-#define EXPOSE_METHOD(Class, Method, Signature) \
+#define _EXPOSE_METHOD_IMPL(Class, Method, Signature) \
     template struct private_access::init_member<Class, Signature, &Class::Method>;
 
-#define EXPOSE_STATIC_MEMBER(Class, Name) \
+#define _EXPOSE_STATIC_MEMBER_IMPL(Class, Name) \
     template struct private_access::init_static_member<Class, decltype(Class::Name), &Class::Name>;
 
-#define EXPOSE_STATIC_METHOD(Class, Method, Signature) \
+#define _EXPOSE_STATIC_METHOD_IMPL(Class, Method, Signature) \
     template struct private_access::init_static_member<Class, Signature, &Class::Method>;
+
+    // Обёртки с контекстом
+#define EXPOSE_MEMBER(Name) \
+    _EXPOSE_MEMBER_IMPL(__private_acess_class, Name)
+
+#define EXPOSE_METHOD(Method, Signature) \
+    _EXPOSE_METHOD_IMPL(__private_acess_class, Method, Signature)
+
+#define EXPOSE_STATIC_MEMBER(Name) \
+    _EXPOSE_STATIC_MEMBER_IMPL(__private_acess_class, Name)
+
+#define EXPOSE_STATIC_METHOD(Method, Signature) \
+    _EXPOSE_STATIC_METHOD_IMPL(__private_acess_class, Method, Signature)
+
+// Основной макрос PRIVATE
+#define PRIVATE(Class, Body)             \
+    namespace private_access {           \
+    typedef Class __private_acess_class; \
+    Body }
+}

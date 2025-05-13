@@ -18,21 +18,18 @@ private:
     static inline std::string secret = "Private static!";
 };
 
-// ==================== Инициализация указателей ====================
-// Для полей
-EXPOSE_MEMBER(Dog, name); // template struct private_access::init_member<Dog, std::string, &Dog::name>;
-EXPOSE_MEMBER(Dog, age); // template struct private_access::init_member<Dog, int, &Dog::age>;
+// ==================== Инициализация ====================
+PRIVATE(Dog, 
+    EXPOSE_MEMBER(name);
+    EXPOSE_MEMBER(age);
 
-// Для методов
-EXPOSE_METHOD(Dog, bark, std::string() const); // template struct private_access::init_member<Dog, std::string() const, &Dog::bark>;
-EXPOSE_METHOD(Dog, rename, void(std::string)); // template struct private_access::init_member<Dog, void(std::string), &Dog::rename>;
+    EXPOSE_METHOD(bark, std::string() const);
+    EXPOSE_METHOD(rename, void(std::string));
 
-// Статические члены
-EXPOSE_STATIC_MEMBER(Dog, secret); // template struct private_access::init_static_member<Dog, std::string, &Dog::secret>;
-EXPOSE_STATIC_METHOD(Dog, species, std::string()); // template struct private_access::init_static_member<Dog, std::string(), &Dog::species>;
-EXPOSE_STATIC_METHOD(Dog, legs, int()); // template struct private_access::init_static_member<Dog, int(), &Dog::legs>;
-
-
+    EXPOSE_STATIC_MEMBER(secret);
+    EXPOSE_STATIC_METHOD(species, std::string());
+    EXPOSE_STATIC_METHOD(legs, int())
+    );
 
 // ==================== Использование ====================
 int main() {
